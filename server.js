@@ -1,44 +1,44 @@
-const express = require("express");
-//paths
-const path = require("path");
-const controller = require("./controllers");
-//handlebars
-const exphbs = require("express-handlebars");
-//sequelize
-const sequelize = require("./config/connection");
-//creating session variables
-const session = require("express-session");
-const SequlizeStore = require("connect-session-sequelize")(session.Store);
+const path = require('path');
+const express = require('express');
+const exphbs = require('express-handlebars');
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
-//session setup(from main)
+const routes = require('./controllers');
+const sequelize = require('./config/connection');
+const helpers = require('./utils/helpers');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
 const sess = {
-    secret: "super secret secret",
-    cookie: {},
+    secret: 'The secret formula for the Krabby Patty',
+    cookie: {
+        // session expires after 10 minutes
+        maxAge: 10 * 60 * 1000
+    },
     resave: false,
     saveUninitialized: true,
-    store: new SequlizeStore({
-      db: sequelize,
-    }),
-  };
-  
-  //start server
-  const app = express();
-  const PORT = process.env.PORT || 3003;
-  
-  //middleware
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  app.use(express.static(path.join(__dirname, "public")));
-  app.use(session(sess));
-  
-  //controllers
-  app.use("/", controller);
-  
-  //renders handlebars
-  app.engine("handlebars", exphbs());
-  app.set("view engine", "handlebars");
-  
-  sequelize.sync({ force: false }).then(() => {
-    app.listen(PORT, () => console.log(`Now listening on port ${PORT}`));
-  });
-  
+    store: new SequelizeStore({
+        db: sequelize
+    })
+};
+
+app.use(session(sess));
+
+const hbs = exphbs.create({ helpers });
+
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// turn on routes
+app.use(routes);
+
+// turn on connection to db and server
+sequelize.sync({ force: false }).then(() => {
+    app.listen(PORT, () => console.log('Now listening'));
+});

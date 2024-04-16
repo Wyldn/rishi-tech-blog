@@ -1,0 +1,40 @@
+<div class="content">
+    <article class="edit-post">
+        <a href="/dashboard"><i class="fa-solid fa-arrow-left-long"></i> back to dashboard</a>
+
+        <h2>Edit Post</h2>
+
+        <form class="edit-post">
+            <div>
+                <label for="post-title">title</label>
+                <input name="post-title" type="text" value="{{post.title}}" />
+            </div>
+            <div>
+                <label for="post-text">content</label>
+                <textarea name="post-text">{{post.post_text}}</textarea>
+            </div>
+
+            <button type="submit"><i class="fa-solid fa-floppy-disk"></i> save post</button>
+            <button type="button" class="secondary-btn"><i class="fa-solid fa-trash-can"></i> delete</button>
+        </form>
+    </article>
+
+</div>
+
+    <form class="comment-form">
+        <div>
+            <textarea name="comment-body" placeholder="Add a comment..."></textarea>
+        </div>
+        <div>
+            <button type="submit"><i class="fa-solid fa-paper-plane"></i> comment</button>
+        </div>
+    </form>
+
+    <h2 class="comment">
+        {{post.comments.length}} {{format_plural "comment" post.comments.length}}
+    </h2>
+
+    {{> comments post.comments}}
+
+<script src="/javascript/edit-post.js"></script>
+<script src="/javascript/comment.js"></script>
